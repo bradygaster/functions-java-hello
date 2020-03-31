@@ -8,6 +8,5 @@
         "ms-vscode.azurecli",
         "vscjava.vscode-java-debug",
         "ms-azuretools.vscode-azurefunctions"
-    ],
-    "postCreateCommand": "/bin/bash ./.devcontainer/setup.sh > ~/workspace/setup.log"
+    ]
 }
