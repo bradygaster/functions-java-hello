@@ -32,7 +32,7 @@ RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb
 RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - 2>/dev/null
 RUN apt-get update 
 RUN apt-get install -y azure-cli;
-RUN porter mixins install jq --url https://github.com/squillace/porter-jq/releases/download --version v0.1.0
+# RUN porter mixins install jq --url https://github.com/squillace/porter-jq/releases/download --version v0.1.0
 
 # Install the scenario prerequisities
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
