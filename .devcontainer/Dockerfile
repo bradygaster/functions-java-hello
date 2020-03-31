@@ -21,15 +21,24 @@ ENV NVM_DIR=/home/vscode/.nvm
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Configure apt and install packages
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-RUN mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
-RUN sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-$(lsb_release -cs)-prod $(lsb_release -cs) main" > /etc/apt/sources.list.d/dotnetdev.list'
-RUN curl https://cdn.porter.sh/canary/install-linux.sh | bash
 RUN apt-get update
 RUN apt-get -y install --no-install-recommends apt-utils dialog 2>&1
     
 # Verify git, process tools, lsb-release (common in install instructions for CLIs) installed
 RUN apt-get -y install git iproute2 procps apt-transport-https gnupg2 curl lsb-release
+
+# Install the Azure CLI
+RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/azure-cli.list
+RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - 2>/dev/null
+RUN apt-get update 
+RUN apt-get install -y azure-cli;
+RUN porter mixins install jq --url https://github.com/squillace/porter-jq/releases/download --version v0.1.0
+
+# Install the scenario prerequisities
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+RUN mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+RUN sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-$(lsb_release -cs)-prod $(lsb_release -cs) main" > /etc/apt/sources.list.d/dotnetdev.list'
+RUN curl https://cdn.porter.sh/canary/install-linux.sh | bash
 RUN apt-get -y install azure-functions-core-tools-3
 
     #
@@ -41,12 +50,6 @@ RUN apt-get -y install azure-functions-core-tools-3
     # && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME\
     # && chmod 0440 /etc/sudoers.d/$USERNAME \
     
-RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/azure-cli.list
-RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - 2>/dev/null
-RUN apt-get update 
-RUN apt-get install -y azure-cli;
-RUN porter mixins install jq --url https://github.com/squillace/porter-jq/releases/download --version v0.1.0
-
 # Clean up
 RUN apt-get autoremove -y \
 && apt-get clean -y \
